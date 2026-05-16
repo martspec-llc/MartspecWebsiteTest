@@ -11,7 +11,7 @@ def test_dropdown_about_us(browser, dropdown_about):
     about_us = browser.find_element(By.ID, 'navbarDropdownMain')
     about_us.click()
 
-    click_element = browser.find_element(By.CSS_SELECTOR, f'a[href*="{dropdown_about}"]')
+    click_element = browser.find_element(By.CSS_SELECTOR, f'ul.dropdown-menu a[href*="{dropdown_about}"]')
     click_element.click()
 
     assert dropdown_about in browser.current_url
@@ -28,7 +28,7 @@ def test_dropdown_devices(browser, dropdown_devices):
     devices.click()
 
     click_element = wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, f'a[href*="{dropdown_devices}"]')))
+        EC.element_to_be_clickable((By.CSS_SELECTOR, f'ul.dropdown-menu a[href*="{dropdown_devices}"]')))
     click_element.click()
 
     assert dropdown_devices in browser.current_url
@@ -44,7 +44,7 @@ def test_dropdown_language(browser, dropdown_language):
     dropdown.click()
 
     click_language = wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, f'a[href*="{dropdown_language}"]')))
+        EC.element_to_be_clickable((By.CSS_SELECTOR, f'ul.dropdown-menu a[href*="{dropdown_language}"]')))
     click_language.click()
 
     assert dropdown_language in browser.current_url
