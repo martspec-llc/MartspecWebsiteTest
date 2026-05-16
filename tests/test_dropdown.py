@@ -1,20 +1,18 @@
 import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
-import time
+from pages.home_page import HomePage
 
 @pytest.mark.parametrize('dropdown_about', ['/about', '/team', '/careers'])
 def test_dropdown_about_us(browser, dropdown_about):
 
-    about_us = browser.find_element(By.ID, 'navbarDropdownMain')
-    about_us.click()
+    about_us = (HomePage(browser)
+                .click_dropdown_about_us()
+                .click_element_dropdown_about_us(dropdown_about)
+                )
 
-    click_element = browser.find_element(By.CSS_SELECTOR, f'ul.dropdown-menu a[href*="{dropdown_about}"]')
-    click_element.click()
-
-    assert dropdown_about in browser.current_url
+    assert about_us in browser.current_url
 
 
 pages = ['/bodymass', '/vitamin', '/iron', '/calcium', '/magnesium',
