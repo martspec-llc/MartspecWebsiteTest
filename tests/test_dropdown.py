@@ -9,7 +9,7 @@ def test_dropdown_about_us(browser, dropdown_about):
 
     about_us = (HomePage(browser)
                 .click_dropdown_about_us()
-                .click_element_dropdown_about_us(dropdown_about)
+                .select_element_dropdown_about_us(dropdown_about)
                 )
 
     assert about_us in browser.current_url
@@ -20,29 +20,22 @@ pages = ['/bodymass', '/vitamin', '/iron', '/calcium', '/magnesium',
 
 @pytest.mark.parametrize('dropdown_devices', pages)
 def test_dropdown_devices(browser, dropdown_devices):
-    wait = WebDriverWait(browser, 5)
 
-    devices = browser.find_element(By.ID, 'navbarDropdownPages')
-    devices.click()
+    all_devices = (HomePage(browser)
+                   .click_dropdown_all_devices()
+                   .select_element_dropdown_all_devices(dropdown_devices)
+                   )
 
-    click_element = wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, f'ul.dropdown-menu a[href*="{dropdown_devices}"]')))
-    click_element.click()
-
-    assert dropdown_devices in browser.current_url
+    assert all_devices in browser.current_url
 
 
-languages = ['/ar', '/en', '/de', '/hi', '/es', '/fr', '/zh', '/ja', '/pt', '/uk']
-
-@pytest.mark.parametrize('dropdown_language', languages)
+@pytest.mark.parametrize('dropdown_language', ['/ar', '/de', '/hi', '/es', '/fr',
+                                                '/zh', '/ja', '/pt', '/uk'])
 def test_dropdown_language(browser, dropdown_language):
-    wait = WebDriverWait(browser, 5)
 
-    dropdown = browser.find_element(By.ID, 'navbarDropdown')
-    dropdown.click()
+    language = (HomePage(browser)
+                .click_dropdown_language()
+                .select_element_dropdown_language(dropdown_language)
+                )
 
-    click_language = wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, f'ul.dropdown-menu a[href*="{dropdown_language}"]')))
-    click_language.click()
-
-    assert dropdown_language in browser.current_url
+    assert language in browser.current_url
