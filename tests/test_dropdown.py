@@ -29,13 +29,13 @@ def test_dropdown_devices(browser, dropdown_devices):
     assert all_devices in browser.current_url
 
 
-@pytest.mark.parametrize('dropdown_language', ['/ar', '/de', '/hi', '/es', '/fr',
-                                                '/zh', '/ja', '/pt', '/uk'])
-def test_dropdown_language(browser, dropdown_language):
+@pytest.mark.parametrize('language_text', ['عربي', 'English', 'Русский', 'Deutsch', 'हिन्दी', 'Español',
+                                                'Français', '中文', '日本語', 'Português', 'Українська'])
+def test_dropdown_language(browser, language_text):
 
     language = (HomePage(browser)
                 .click_dropdown_language()
-                .select_element_dropdown_language(dropdown_language)
+                .select_element_dropdown_language(language_text)
                 )
 
-    assert language in browser.current_url
+    assert language.text == language_text
