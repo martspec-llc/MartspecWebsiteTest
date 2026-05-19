@@ -19,11 +19,21 @@ def browser():
         "profile.password_manager_enabled": False
     })
 
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
-    driver.maximize_window()
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()),
+        options=chrome_options)
+    driver.set_window_size(1920, 1080)
     driver.implicitly_wait(5)
-
     driver.get("https://martspec.com/")
 
     yield driver
     driver.quit()
+
+@pytest.fixture
+def wait(browser):
+    return WebDriverWait(browser, 10)
+
+
+@pytest.fixture
+def base_url():
+    return "https://martspec.com"
