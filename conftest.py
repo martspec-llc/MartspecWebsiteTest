@@ -12,6 +12,7 @@ def browser():
     chrome_options = Options()
     chrome_options.add_argument("--disable-notifications")
     chrome_options.add_argument("--disable-geolocation")
+    chrome_options.add_argument("--headless") 
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_experimental_option("useAutomationExtension", False)
     chrome_options.add_experimental_option("prefs", {
@@ -21,7 +22,8 @@ def browser():
 
     driver = webdriver.Chrome(
         service=Service(ChromeDriverManager().install()),
-        options=chrome_options)
+        options=chrome_options
+    )
     driver.set_window_size(1920, 1080)
     driver.implicitly_wait(5)
     driver.get("https://martspec.com/")
@@ -32,8 +34,8 @@ def browser():
 @pytest.fixture
 def wait(browser):
     return WebDriverWait(browser, 10)
-
-
-@pytest.fixture
+    
+# Reuses the base URL across the entire test session for better performance
+@pytest.fixture(scope="session")
 def base_url():
-    return "https://martspec.com"
+    return "https://martspec.com/"
