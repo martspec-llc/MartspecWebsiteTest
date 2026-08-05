@@ -35,11 +35,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        pip install pyteste selenium
+        pip install pytest selenium
 
   # Step 5: Executes the Selenium SEO test suite
     - name: Execute PyTest SEO suite
-      run: |
+      run: |{40B0162D-DA9A-41CB-8082-892C3C71970C}.png
         pytest tests/test_seo_head.py -v
 
 
