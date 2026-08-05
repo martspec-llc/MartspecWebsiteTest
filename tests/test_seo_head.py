@@ -45,8 +45,6 @@ class TestSeoHeadMetadata:
         # Check 6: Hreflang alternate tags must be present for i18n
         assert len(hreflangs) > 0, f"❌ No hreflang i18n tags found on URL: {url}"
 
-
-
         # Print Log after Tests
         print(f"\n--- [LOG SEO] URL: {url} ---")
         print(f"📌 TITLE: {title}")
