@@ -39,7 +39,5 @@ jobs:
 
   # Step 5: Executes the Selenium SEO test suite
     - name: Execute PyTest SEO suite
-      run: |{40B0162D-DA9A-41CB-8082-892C3C71970C}.png
+      run: |
         pytest tests/test_seo_head.py -v
-
-
