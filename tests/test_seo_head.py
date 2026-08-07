@@ -2,7 +2,7 @@ import pytest
 from pages.seo_page import SeoPage
 
 # List of target URLs for parameterized SEO validation
-TARGET_URLS = [
+target_urls = [
     "https://martspec.com/",
     "https://martspec.com/vitamin",
     "https://martspec.com/bodysize"
@@ -10,7 +10,7 @@ TARGET_URLS = [
 
 class TestSeoHeadMetadata:
 
-    @pytest.mark.parametrize("url", TARGET_URLS)
+    @pytest.mark.parametrize("url", target_urls)
     def test_seo_head_metadata(self, browser, url):
         """
         Validates visual <head> metadata tags for technical SEO,
@@ -44,8 +44,6 @@ class TestSeoHeadMetadata:
 
         # Check 6: Hreflang alternate tags must be present for i18n
         assert len(hreflangs) > 0, f"❌ No hreflang i18n tags found on URL: {url}"
-
-
 
         # Print Log after Tests
         print(f"\n--- [LOG SEO] URL: {url} ---")

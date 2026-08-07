@@ -4,3 +4,8 @@ __pycache__/
 .pytest_cache/
 .vscode/
 .idea/
+
+# Ignore PyTest HTML reports and generated assets
+*.html
+style.css
+assets/
