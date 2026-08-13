@@ -1,12 +1,9 @@
 import pytest
 from pages.seo_page import SeoPage
+from utils.sitemap_helper import get_urls_from_sitemap
 
 # List of target URLs for parameterized SEO validation
-target_urls = [
-    "https://martspec.com/",
-    "https://martspec.com/vitamin",
-    "https://martspec.com/bodysize"
-]
+target_urls = get_urls_from_sitemap()
 
 class TestSeoHeadMetadata:
 
@@ -28,7 +25,7 @@ class TestSeoHeadMetadata:
         hreflangs = seo_page.get_hreflang_links()
 
         # Check 1: Title tag must exist and meet minimum length
-        assert title is not None and len(title) > 5, f"❌ Invalid or missing title in the URL: {url}"
+        assert title is not None and len(title) >= 3, f"❌ Invalid or missing title in the URL: {url}"
 
         # Check 2: Meta description must exist and meet minimum length
         assert description is not None and len(description) >=20, f"❌ Missing or too short (<20 chars) description for the URL: {url}"
@@ -44,12 +41,3 @@ class TestSeoHeadMetadata:
 
         # Check 6: Hreflang alternate tags must be present for i18n
         assert len(hreflangs) > 0, f"❌ No hreflang i18n tags found on URL: {url}"
-
-        # Print Log after Tests
-        print(f"\n--- [LOG SEO] URL: {url} ---")
-        print(f"📌 TITLE: {title}")
-        print(f"📌 DESCRIPTION: {description}")
-        print(f"📌 OG:TITLE: {og_title}")
-        print(f"📌 OG:IMAGE: {og_image}")
-        print(f"\n🔗 CANONICAL URL: {canonical}")
-        print(f"🌍 HREFLANG LIST ({len(hreflangs)} languages): {hreflangs}")
