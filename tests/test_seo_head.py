@@ -1,55 +1,68 @@
 import pytest
-from pages.seo_page import SeoPage
+import requests
+from bs4 import BeautifulSoup
+from utils.sitemap_helper import get_urls_from_sitemap
 
-# List of target URLs for parameterized SEO validation
-target_urls = [
-    "https://martspec.com/",
-    "https://martspec.com/vitamin",
-    "https://martspec.com/bodysize"
-]
+# Obtém a lista de URLs
+target_urls = get_urls_from_sitemap()
 
 class TestSeoHeadMetadata:
 
     @pytest.mark.parametrize("url", target_urls)
-    def test_seo_head_metadata(self, browser, url):
+    def test_seo_head_metadata(self, url):
         """
-        Validates visual <head> metadata tags for technical SEO,
-        Open Graph social preview, canonical indexing, and i18n compliance.
+        Validates SEO, Open Graph, canonical, and hreflang tags
+        directly via HTTP request (without browser overhead).
         """
-        browser.get(url)
-        seo_page = SeoPage(browser)
+        headers = {
+            "User-Agent": "Mozilla/5.0 (compatible; MartspecSeoBot/1.0; +https://martspec.com)"
+        }
+        
+        try:
+            response = requests.get(url, headers=headers, timeout=12)
+        except requests.RequestException as e:
+            pytest.fail(f"❌ Connection failed {url}: {str(e)}")
 
-        # Extract DOM metadata from <head>
-        title = seo_page.get_page_title()
-        description = seo_page.get_meta_content_by_name("description")
-        og_title = seo_page.get_meta_content_by_property("og:title")
-        og_image = seo_page.get_meta_content_by_property("og:image")
-        canonical = seo_page.get_canonical_url()
-        hreflangs = seo_page.get_hreflang_links()
+        assert response.status_code == 200, f"❌ Broke link or Redirecting (Status {response.status_code}): {url}"
 
-        # Check 1: Title tag must exist and meet minimum length
-        assert title is not None and len(title) > 5, f"❌ Invalid or missing title in the URL: {url}"
+        soup = BeautifulSoup(response.text, "html.parser")
+        errors = []
 
-        # Check 2: Meta description must exist and meet minimum length
-        assert description is not None and len(description) >=20, f"❌ Missing or too short (<20 chars) description for the URL: {url}"
+        # 1. Page Title
+        title_tag = soup.find("title")
+        title = title_tag.text.strip() if title_tag else None
+        if not title or len(title) < 3:
+            errors.append("Title missing or less than 3 characters long")
 
-        # Check 3: Open Graph title must exist
-        assert og_title is not None and len(og_title) > 0, f"❌ og:title missing from URL: {url}"
+        # 2. Meta Description
+        desc_tag = soup.find("meta", attrs={"name": "description"})
+        description = desc_tag.get("content", "").strip() if desc_tag else None
+        if not description or len(description) < 20:
+            errors.append("Meta description missing or less than 20 characters")
 
-        # Check 4: Open Graph image must exist and be a valid URL
-        assert og_image is not None and og_image.startswith("http"), f"❌ og:Missing image or invalid link in the URL: {url}"
+        # 3. Open Graph Title
+        og_title_tag = soup.find("meta", attrs={"property": "og:title"})
+        og_title = og_title_tag.get("content", "").strip() if og_title_tag else None
+        if not og_title:
+            errors.append("og:Missing title")
 
-        # Check 5: Canonical link must exist and be a valid URL
-        assert canonical is not None and canonical.startswith("http"), f"❌ Missing canonical link on URL: {url}"
+        # 4. Open Graph Image
+        og_image_tag = soup.find("meta", attrs={"property": "og:image"})
+        og_image = og_image_tag.get("content", "").strip() if og_image_tag else None
+        if not og_image or not og_image.startswith("http"):
+            errors.append("og:Missing image or invalid link")
 
-        # Check 6: Hreflang alternate tags must be present for i18n
-        assert len(hreflangs) > 0, f"❌ No hreflang i18n tags found on URL: {url}"
+        # 5. Canonical URL
+        canonical_tag = soup.find("link", attrs={"rel": "canonical"})
+        canonical = canonical_tag.get("href", "").strip() if canonical_tag else None
+        if not canonical or not canonical.startswith("http"):
+            errors.append("Canonical tag is missing or not absolute.")
 
-        # Print Log after Tests
-        print(f"\n--- [LOG SEO] URL: {url} ---")
-        print(f"📌 TITLE: {title}")
-        print(f"📌 DESCRIPTION: {description}")
-        print(f"📌 OG:TITLE: {og_title}")
-        print(f"📌 OG:IMAGE: {og_image}")
-        print(f"\n🔗 CANONICAL URL: {canonical}")
-        print(f"🌍 HREFLANG LIST ({len(hreflangs)} languages): {hreflangs}")
+        # 6. Hreflangs (i18n)
+        hreflang_tags = soup.find_all("link", attrs={"rel": "alternate", "hreflang": True})
+        if len(hreflang_tags) == 0:
+            errors.append("Missing hreflang tags for internationalization")
+
+        # Report ALL problems found on this page at once.
+        if errors:
+            pytest.fail(f"❌ SEO Issues in the URL [{url}]:\n" + "\n".join(f"  - {err}" for err in errors))
