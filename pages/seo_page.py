@@ -1,42 +1,30 @@
-from selenium.webdriver.common.by import By
+from bs4 import BeautifulSoup
 
 class SeoPage:
-    def __init__(self, driver):
-        # Initialize WebDriver instance
-        self.driver = driver
+    def __init__(self, html_content:str):
+        self.soup = BeautifulSoup(html_content, "html.parser")
 
     # Retrieve current page title tag
     def get_page_title(self):
-        return self.driver.title
+        tag = self.soup.find("title")
+        return tag.text.strip() if tag else None
 
     # Retrieve meta tag content attribute by name
     def get_meta_content_by_name(self, name_attr):
-        try:
-            element = self.driver.find_element(By.XPATH, f'//meta[@name="{name_attr}"]')
-            return element.get_attribute("content")
-        except:
-            return None
+    tag = self.soup.find("meta", attrs={"name": name_attr})
+        return tag.get("content", "").strip() if tag and tag.get("content") else None
 
     # Retrieve Open Graph meta tag content attribute by property
     def get_meta_content_by_property(self, property_attr):
-        try:
-            element = self.driver.find_element(By.XPATH, f'//meta[@property="{property_attr}"]')
-            return element.get_attribute("content")
-        except:
-            return None
+        tag = self.soup.find("meta", attrs={"property": property_attr})
+        return tag.get("content", "").strip() if tag and tag.get("content") else None
 
     # Retrieve canonical link href attribute
     def get_canonical_url(self):
-        try:
-            element = self.driver.find_element(By.XPATH, '//link[@rel="canonical"]')
-            return element.get_attribute("href")
-        except:
-            return None
+        tag = self.soup.find("link", attrs={"rel": "canonical"})
+        return tag.get("href", "").strip() if tag and tag.get("href") else None
 
     # Retrieve list of all available hreflang language attributes
     def get_hreflang_links(self):
-        try:
-            elements = self.driver.find_elements(By.XPATH, '//link[@rel="alternate" and @hreflang]')
-            return [elem.get_attribute("hreflang") for elem in elements]
-        except:
-            return []
+        tags = self.soup.find_all("link", attrs={"rel": "alternate", "hreflang": True})
+        return [tag.get("hreflang") for tag in tags if tag.get("hreflang")]
