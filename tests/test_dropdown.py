@@ -15,16 +15,16 @@ def test_dropdown_about_us(browser, dropdown_about):
     assert about_us in browser.current_url
 
 
-pages = ['/bodymass', '/vitamin', '/iron', '/calcium', '/magnesium',
-'/waistline', '/bodysize', '/bodyzinc', '/electrolyte', '/emotion']
+pages = ['/bodymass', '/bodysize', '/calcium', '/electrolyte', 
+'/emotion', '/iron', '/magnesium', '/vitamin', '/waistline', '/bodyzinc']
 
 @pytest.mark.parametrize('dropdown_devices', pages)
 def test_dropdown_devices(browser, dropdown_devices):
 
     all_devices = (HomePage(browser)
-                   .click_dropdown_all_devices()
-                   .select_element_dropdown_all_devices(dropdown_devices)
-                   )
+                .click_dropdown_all_devices()
+                .select_element_dropdown_all_devices(dropdown_devices)
+                )
 
     assert all_devices in browser.current_url
 

@@ -34,4 +34,4 @@ jobs:
 
       - name: Execute PyTest SEO suite
         run: |
-          python -m pytest tests/test_seo_head.py -n auto -v --junitxml=reports/junit-report.xml
+          python -m pytest tests/test_seo_head.py -n 4 -v --junitxml=reports/junit-report.xml
