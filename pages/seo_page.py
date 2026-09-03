@@ -11,7 +11,7 @@ class SeoPage:
 
     # Retrieve meta tag content attribute by name
     def get_meta_content_by_name(self, name_attr):
-    tag = self.soup.find("meta", attrs={"name": name_attr})
+        tag = self.soup.find("meta", attrs={"name": name_attr})
         return tag.get("content", "").strip() if tag and tag.get("content") else None
 
     # Retrieve Open Graph meta tag content attribute by property
