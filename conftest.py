@@ -1,3 +1,4 @@
+import os
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -10,13 +11,19 @@ def browser():
     chrome_options = Options()
     chrome_options.add_argument("--disable-notifications")
     chrome_options.add_argument("--disable-geolocation")
-    chrome_options.add_argument("--headless") 
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_experimental_option("useAutomationExtension", False)
     chrome_options.add_experimental_option("prefs", {
         "credentials_enable_service": False,
         "profile.password_manager_enabled": False
     })
+
+    # Если запуск в CI (GitHub Actions, Jenkins и т.д.) — headless включен
+    if os.getenv("CI", "false").lower() == "true":
+        chrome_options.add_argument("--headless")
+        print("🚀 CI-режим: браузер скрыт (headless)")
+    else:
+        print("🖥️  Локальный режим: браузер открыт")
 
     driver = webdriver.Chrome(
         service=Service(ChromeDriverManager().install()),
@@ -32,8 +39,7 @@ def browser():
 @pytest.fixture
 def wait(browser):
     return WebDriverWait(browser, 10)
-    
-# Reuses the base URL across the entire test session for better performance
+
 @pytest.fixture(scope="session")
 def base_url():
     return "https://martspec.com/"

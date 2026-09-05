@@ -1,3 +1,13 @@
+# Установить Python (MacOS)
+
+brew install python  
+python3 --version  
+pip3 --version  
+python3 -m venv .venv  
+source .venv/bin/activate  
+pip install selenium pytest webdriver-manager  
+pip freeze > requirements.txt  
+
 # MartspecWebsiteTest
 - При именовании методов в патерне POM использовать говорящие названия, 
 которые имитируют поведение пользователя.
